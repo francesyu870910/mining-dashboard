@@ -7,7 +7,15 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Filter, Calendar, AlertTriangle, Info, CheckCircle } from "lucide-react"
+import { Search, Filter, Calendar, AlertTriangle, Info, CheckCircle, Eye } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
 
 interface Event {
   id: string
@@ -71,6 +79,14 @@ export default function EventsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [filterType, setFilterType] = useState("全部")
   const [filterLevel, setFilterLevel] = useState("全部")
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+  const [showEventDetails, setShowEventDetails] = useState(false)
+
+  // 打开事件详情对话框
+  const handleViewDetails = (event: Event) => {
+    setSelectedEvent(event)
+    setShowEventDetails(true)
+  }
 
   const filteredEvents = events.filter((event) => {
     const matchesSearch =
@@ -226,6 +242,7 @@ export default function EventsPage() {
                 <TableHead className="text-gray-700">描述</TableHead>
                 <TableHead className="text-gray-700">位置</TableHead>
                 <TableHead className="text-gray-700">状态</TableHead>
+                <TableHead className="text-gray-700">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -248,12 +265,105 @@ export default function EventsPage() {
                       <span>{event.status}</span>
                     </div>
                   </TableCell>
+                  <TableCell>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="flex items-center gap-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                      onClick={() => handleViewDetails(event)}
+                    >
+                      <Eye className="w-4 h-4" />
+                      查看
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
+
+      {/* 事件详情对话框 */}
+      <Dialog open={showEventDetails} onOpenChange={setShowEventDetails}>
+        <DialogContent className="bg-white border-gray-200 sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold">事件详情</DialogTitle>
+            <DialogDescription className="text-gray-500">
+              查看事件的详细信息
+            </DialogDescription>
+          </DialogHeader>
+          {selectedEvent && (
+            <div className="space-y-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">事件ID</p>
+                  <p className="font-medium">{selectedEvent.id}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">发生时间</p>
+                  <p className="font-medium">{selectedEvent.time}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">事件类型</p>
+                  <Badge variant="outline" className="border-slate-600">
+                    {selectedEvent.type}
+                  </Badge>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">事件级别</p>
+                  <Badge className={getLevelColor(selectedEvent.level)}>
+                    {selectedEvent.level}
+                  </Badge>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">发生位置</p>
+                  <p className="font-medium">{selectedEvent.location}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">处理状态</p>
+                  <div className="flex items-center gap-2">
+                    {getStatusIcon(selectedEvent.status)}
+                    <span>{selectedEvent.status}</span>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500 mb-1">事件描述</p>
+                <p className="bg-gray-50 p-3 rounded-md">{selectedEvent.description}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500 mb-1">处理记录</p>
+                <div className="bg-gray-50 p-3 rounded-md space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-gray-400">2025-06-02 22:31:05</span>
+                    <span>系统自动记录事件</span>
+                  </div>
+                  {selectedEvent.status !== "未处理" && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-gray-400">2025-06-02 22:32:30</span>
+                      <span>安全员已确认并开始处理</span>
+                    </div>
+                  )}
+                  {selectedEvent.status === "已处理" && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-gray-400">2025-06-02 22:45:12</span>
+                      <span>问题已解决，恢复正常</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+              onClick={() => setShowEventDetails(false)}
+            >
+              关闭
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

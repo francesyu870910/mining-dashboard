@@ -142,3 +142,23 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* 隐藏Next.js开发徽章 */
+#__next-build-watcher {
+  display: none !important;
+}
+
+/* 隐藏所有可能的Next.js徽章变体 */
+[data-nextjs-dialog],
+[data-nextjs-toast],
+[data-nextjs-refresh],
+[data-nextjs-codeframe] {
+  display: none !important;
+}
+
+/* 隐藏Next.js的开发模式指示器 */
+body > div:last-child[style*="position: fixed"][style*="bottom"],
+body > div:last-child[style*="position: fixed"][style*="right"],
+body > div:last-child[style*="position: fixed"][style*="left"] {
+  display: none !important;
+}

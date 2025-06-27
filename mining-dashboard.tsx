@@ -60,7 +60,7 @@ export default function MiningDashboard() {
             </div>
             <div className="flex items-center gap-1">
               <Clock className="w-4 h-4" />
-              <span>2025/6/2 22:29:16</span>
+              <span>2025/6/7 22:29:16</span>
             </div>
             <div className="flex items-center gap-1">
               <MapPin className="w-4 h-4" />
@@ -220,7 +220,7 @@ export default function MiningDashboard() {
         <div className="flex-1 space-y-4">
           {/* Production Data Chart */}
           <Card className="bg-slate-800 border-slate-700 h-80">
-            <CardHeader>
+            <CardHeader className="border-b-0 pb-0">
               <CardTitle className="flex items-center gap-2 text-blue-400">
                 <TrendingUp className="w-5 h-5" />
                 生产数据分析
